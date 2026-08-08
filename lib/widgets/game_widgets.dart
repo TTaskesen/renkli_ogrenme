@@ -60,7 +60,12 @@ class GameScaffold extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(child: body),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: body,
+                ),
+              ),
             ],
           ),
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/menu_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/app_state.dart';
 
 Future<void> main() async {
@@ -33,7 +33,7 @@ class _RenkliOgrenmeAppState extends State<RenkliOgrenmeApp> {
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
           ),
-          home: MenuScreen(app: _appState),
+          home: SplashScreen(app: _appState),
         );
       },
     );
