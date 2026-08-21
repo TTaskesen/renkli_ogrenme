@@ -3,13 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/translations.dart';
 import 'tts_service.dart';
 
-enum AppLanguage { tr, en, fr }
+enum AppLanguage { tr, en, fr, ku }
 
 abstract class GameIds {
   static const quiz = 'quiz';
   static const match = 'match';
   static const memory = 'memory';
   static const puzzle = 'puzzle';
+  static const coloring = 'coloring';
 }
 
 class AppState extends ChangeNotifier {
@@ -24,7 +25,13 @@ class AppState extends ChangeNotifier {
   static const _bestPrefix = 'best_score_';
   static const _starsPrefix = 'stars_';
 
-  static const allGameIds = [GameIds.quiz, GameIds.match, GameIds.memory, GameIds.puzzle];
+  static const allGameIds = [
+    GameIds.quiz,
+    GameIds.match,
+    GameIds.memory,
+    GameIds.puzzle,
+    GameIds.coloring,
+  ];
 
   AppLanguage get language => _language;
 
@@ -38,6 +45,8 @@ class AppState extends ChangeNotifier {
         return 'en-US';
       case AppLanguage.fr:
         return 'fr-FR';
+      case AppLanguage.ku:
+        return 'ku';
     }
   }
 
@@ -82,7 +91,7 @@ class AppState extends ChangeNotifier {
 
   void setSoundEnabled(bool value) {
     _soundEnabled = value;
-    TtsService.enabled = value;
+    TtsService.setEnabled(value);
     notifyListeners();
     SharedPreferences.getInstance().then((prefs) {
       prefs.setBool(_soundKey, value);
@@ -113,6 +122,8 @@ class AppState extends ChangeNotifier {
         return Strings.en[key] ?? Strings.tr[key] ?? key;
       case AppLanguage.fr:
         return Strings.fr[key] ?? Strings.en[key] ?? key;
+      case AppLanguage.ku:
+        return Strings.ku[key] ?? Strings.en[key] ?? key;
     }
   }
 }

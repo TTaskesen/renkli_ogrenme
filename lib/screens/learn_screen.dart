@@ -66,7 +66,10 @@ class _LearnScreenState extends State<LearnScreen> {
                   enabled: _currentIndex > 0,
                   onTap: () => _goTo(_currentIndex - 1),
                 ),
-                _DotIndicator(current: _currentIndex, count: ColorData.colors.length),
+                _DotIndicator(
+                  current: _currentIndex,
+                  count: ColorData.colors.length,
+                ),
                 _ArrowButton(
                   icon: Icons.chevron_right,
                   enabled: _currentIndex < ColorData.colors.length - 1,
@@ -81,9 +84,7 @@ class _LearnScreenState extends State<LearnScreen> {
   }
 
   void _speak(ColorItem colorItem, AppState app) {
-    final name = app.language == AppLanguage.tr
-        ? colorItem.nameTr
-        : colorItem.nameEn;
+    final name = colorItem.nameForLanguageCode(app.langCode);
     TtsService.speak(name, app.langCode);
   }
 }
@@ -102,9 +103,7 @@ class _LearnCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = colorItem.color.computeLuminance() < 0.5;
-    final name = app.language == AppLanguage.tr
-        ? colorItem.nameTr
-        : colorItem.nameEn;
+    final name = colorItem.nameForLanguageCode(app.langCode);
 
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -166,7 +165,11 @@ class _LearnCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               IconButton(
-                icon: const Icon(Icons.volume_up, size: 36, color: Color(0xFF26A69A)),
+                icon: const Icon(
+                  Icons.volume_up,
+                  size: 36,
+                  color: Color(0xFF26A69A),
+                ),
                 tooltip: app.t('tap_sound'),
                 onPressed: onTap,
               ),

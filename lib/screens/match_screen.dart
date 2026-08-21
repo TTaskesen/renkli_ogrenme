@@ -53,9 +53,7 @@ class _MatchScreenState extends State<MatchScreen> {
 
   void _speak() {
     final app = widget.app;
-    final name = app.language == AppLanguage.tr
-        ? _targetIndex.nameTr
-        : _targetIndex.nameEn;
+    final name = _targetIndex.nameForLanguageCode(app.langCode);
     TtsService.speak(name, app.langCode);
   }
 
@@ -142,11 +140,7 @@ class _MatchScreenState extends State<MatchScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            _TargetCard(
-              color: _targetIndex.color,
-              app: app,
-              onTap: _speak,
-            ),
+            _TargetCard(color: _targetIndex.color, app: app, onTap: _speak),
             const SizedBox(height: 24),
             Expanded(
               child: GridView.count(

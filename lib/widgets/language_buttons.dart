@@ -8,25 +8,29 @@ class LanguageButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
       children: [
         _LanguageButton(
           selected: app.language == AppLanguage.tr,
           label: 'TR',
           onTap: () => app.setLanguage(AppLanguage.tr),
         ),
-        const SizedBox(width: 12),
         _LanguageButton(
           selected: app.language == AppLanguage.en,
           label: 'EN',
           onTap: () => app.setLanguage(AppLanguage.en),
         ),
-        const SizedBox(width: 12),
         _LanguageButton(
           selected: app.language == AppLanguage.fr,
           label: 'FR',
           onTap: () => app.setLanguage(AppLanguage.fr),
+        ),
+        _LanguageButton(
+          selected: app.language == AppLanguage.ku,
+          label: 'KU',
+          onTap: () => app.setLanguage(AppLanguage.ku),
         ),
       ],
     );

@@ -38,8 +38,10 @@ class _QuizScreenState extends State<QuizScreen> {
     for (var i = 0; i < _questionCount; i++) {
       pool.shuffle(_random);
       final target = pool[i % pool.length];
-      final others = pool.where((c) => c.id != target.id).toList()..shuffle(_random);
-      final options = [target, ...others.take(_optionCount - 1)]..shuffle(_random);
+      final others = pool.where((c) => c.id != target.id).toList()
+        ..shuffle(_random);
+      final options = [target, ...others.take(_optionCount - 1)]
+        ..shuffle(_random);
       _questions.add(_Question(target: target, options: options));
     }
     _current = 0;
@@ -50,7 +52,8 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _answer(int index) {
     if (_answered) return;
-    final correct = _questions[_current].options[index].id ==
+    final correct =
+        _questions[_current].options[index].id ==
         _questions[_current].target.id;
     setState(() {
       _answered = true;
@@ -58,10 +61,7 @@ class _QuizScreenState extends State<QuizScreen> {
       if (correct) _score += 10;
     });
     final app = widget.app;
-    TtsService.speak(
-      correct ? app.t('correct') : app.t('wrong'),
-      app.langCode,
-    );
+    TtsService.speak(correct ? app.t('correct') : app.t('wrong'), app.langCode);
     Future.delayed(const Duration(milliseconds: 1200), () {
       if (!mounted) return;
       setState(() {
@@ -160,7 +160,7 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     final app = widget.app;
     final q = _questions[_current];
-    final name = app.language == AppLanguage.tr ? q.target.nameTr : q.target.nameEn;
+    final name = q.target.nameForLanguageCode(app.langCode);
 
     return GameScaffold(
       app: app,
@@ -224,7 +224,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   final opt = q.options[i];
                   return _Option(
                     key: ValueKey('quiz_option_$i'),
-                    text: app.language == AppLanguage.tr ? opt.nameTr : opt.nameEn,
+                    text: opt.nameForLanguageCode(app.langCode),
                     color: opt.color,
                     state: _optionState(i),
                     onTap: () => _answer(i),
@@ -240,7 +240,8 @@ class _QuizScreenState extends State<QuizScreen> {
 
   _OptionState _optionState(int index) {
     if (!_answered) return _OptionState.none;
-    final correct = _questions[_current].options[index].id ==
+    final correct =
+        _questions[_current].options[index].id ==
         _questions[_current].target.id;
     if (correct) return _OptionState.correct;
     if (index == _selected) return _OptionState.wrong;
@@ -297,7 +298,11 @@ class _Option extends StatelessWidget {
         ),
         child: Center(
           child: icon != null
-              ? Icon(icon, size: 44, color: isDark ? Colors.white : Colors.black87)
+              ? Icon(
+                  icon,
+                  size: 44,
+                  color: isDark ? Colors.white : Colors.black87,
+                )
               : Text(
                   text,
                   style: TextStyle(

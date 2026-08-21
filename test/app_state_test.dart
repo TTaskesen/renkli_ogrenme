@@ -1,7 +1,46 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:renkli_ogrenme/services/app_state.dart';
+import 'package:renkli_ogrenme/services/tts_service.dart';
+
+class _FakeTtsEngine implements TtsEngine {
+  int stopCount = 0;
+  final List<String> spokenTexts = [];
+  final List<String> configuredLanguages = [];
+
+  @override
+  Future<void> awaitSpeakCompletion(bool awaitCompletion) async {}
+
+  @override
+  Future<void> setLanguage(String languageCode) async {
+    configuredLanguages.add(languageCode);
+  }
+
+  @override
+  Future<void> setPitch(double pitch) async {}
+
+  @override
+  Future<void> setSpeechRate(double rate) async {}
+
+  @override
+  Future<void> setVolume(double volume) async {}
+
+  @override
+  Future<void> speak(String text) async => spokenTexts.add(text);
+
+  @override
+  Future<void> stop() async => stopCount++;
+}
+
+class _BlockingTtsEngine extends _FakeTtsEngine {
+  final languageConfigured = Completer<void>();
+
+  @override
+  Future<void> setLanguage(String languageCode) => languageConfigured.future;
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +64,9 @@ void main() {
 
     test('persists sound preference across instances', () async {
       SharedPreferences.setMockInitialValues({});
+      final engine = _FakeTtsEngine();
+      TtsService.replaceEngineForTesting(engine);
+      addTearDown(TtsService.restoreDefaultEngine);
       final app1 = AppState();
       await app1.init();
       expect(app1.soundEnabled, isTrue);
@@ -45,6 +87,15 @@ void main() {
       expect(app.langCode, 'fr-FR');
     });
 
+    test('switches to Kurmanji', () {
+      SharedPreferences.setMockInitialValues({});
+      final app = AppState();
+      app.setLanguage(AppLanguage.ku);
+      expect(app.language, AppLanguage.ku);
+      expect(app.t('app_name'), 'Hînkirina Rengîn');
+      expect(app.langCode, 'ku');
+    });
+
     test('falls back to the key for missing translations', () {
       final app = AppState();
       expect(app.t('missing_key_xyz'), 'missing_key_xyz');
@@ -61,6 +112,61 @@ void main() {
       await app2.init();
       expect(app2.language, AppLanguage.fr);
       expect(app2.t('app_name'), 'Apprentissage Coloré');
+    });
+  });
+
+  group('AppState sound', () {
+    tearDown(TtsService.restoreDefaultEngine);
+
+    test('stops active speech as soon as sound is disabled', () async {
+      final engine = _FakeTtsEngine();
+      TtsService.replaceEngineForTesting(engine);
+      final app = AppState();
+
+      app.setSoundEnabled(false);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(app.soundEnabled, isFalse);
+      expect(TtsService.enabled, isFalse);
+      expect(engine.stopCount, 1);
+    });
+
+    test('uses the engine again after sound is enabled', () async {
+      final engine = _FakeTtsEngine();
+      TtsService.replaceEngineForTesting(engine);
+      final app = AppState();
+
+      app.setSoundEnabled(false);
+      await Future<void>.delayed(Duration.zero);
+      app.setSoundEnabled(true);
+      await TtsService.speak('Rouge', 'fr-FR');
+
+      expect(engine.spokenTexts, ['Rouge']);
+    });
+
+    test('sends Kurmanji text with the Kurdish language code to TTS', () async {
+      final engine = _FakeTtsEngine();
+      TtsService.replaceEngineForTesting(engine);
+
+      await TtsService.speak('Sor', 'ku');
+
+      expect(engine.configuredLanguages, ['ku']);
+      expect(engine.spokenTexts, ['Sor']);
+    });
+
+    test('cancels a queued speech request when sound is disabled', () async {
+      final engine = _BlockingTtsEngine();
+      TtsService.replaceEngineForTesting(engine);
+      final app = AppState();
+
+      final pendingSpeech = TtsService.speak('Rouge', 'fr-FR');
+      await Future<void>.delayed(Duration.zero);
+      app.setSoundEnabled(false);
+      engine.languageConfigured.complete();
+      await pendingSpeech;
+
+      expect(engine.spokenTexts, isEmpty);
+      expect(engine.stopCount, greaterThanOrEqualTo(2));
     });
   });
 
@@ -112,6 +218,7 @@ void main() {
       final app = AppState();
       expect(app.bestScore(GameIds.puzzle), 0);
       expect(app.starsFor(GameIds.puzzle), 0);
+      expect(app.starsFor(GameIds.coloring), 0);
       expect(app.totalStars, 0);
     });
   });

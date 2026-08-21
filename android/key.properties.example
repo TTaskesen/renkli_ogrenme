@@ -1,0 +1,5 @@
+# Bu dosyayı key.properties adıyla kopyalayın. key.properties Git tarafından yok sayılır.
+storePassword=KESTORE_PAROLANIZ
+keyPassword=ANAHTAR_PAROLANIZ
+keyAlias=upload
+storeFile=/mutlak/yol/upload-keystore.jks

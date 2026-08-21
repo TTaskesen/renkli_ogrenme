@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/app_state.dart';
 
 class PrivacyScreen extends StatelessWidget {
   final AppState app;
+
+  static const _supportEmail = 'turguttaskesen@gmail.com';
 
   const PrivacyScreen({super.key, required this.app});
 
@@ -16,7 +19,11 @@ class PrivacyScreen extends StatelessWidget {
       'local':
           'Oyun ilerlemeniz, yıldızlarınız ve dil/ ses tercihleriniz yalnızca cihazınızda yerel olarak saklanır.',
       'ads': 'Uygulama reklam, çerez veya izleyici kullanmaz.',
-      'contact': 'Sorularınız için geliştiriciyle iletişime geçebilirsiniz.',
+      'contact':
+          'Sorularınız ve geri bildirimleriniz için bize ulaşabilirsiniz.',
+      'contact_action': 'E-posta gönder',
+      'contact_error': 'E-posta uygulaması açılamadı.',
+      'contact_body': 'Renkli Öğrenme hakkında destek isteği:',
     },
     'en': {
       'title': 'Privacy Policy',
@@ -27,7 +34,10 @@ class PrivacyScreen extends StatelessWidget {
       'local':
           'Your game progress, stars, and language/sound preferences are stored locally only on your device.',
       'ads': 'The app uses no ads, cookies, or trackers.',
-      'contact': 'You can contact the developer with any questions.',
+      'contact': 'Contact us with your questions and feedback.',
+      'contact_action': 'Send email',
+      'contact_error': 'Could not open an email app.',
+      'contact_body': 'Support request about Colorful Learning:',
     },
     'fr': {
       'title': 'Politique de confidentialité',
@@ -38,9 +48,51 @@ class PrivacyScreen extends StatelessWidget {
       'local':
           'Votre progression, vos étoiles et vos préférences de langue/son sont stockées uniquement sur votre appareil.',
       'ads': 'L\'application n\'utilise ni publicité, ni cookies, ni traceurs.',
-      'contact': 'Vous pouvez contacter le développeur pour toute question.',
+      'contact': 'Contactez-nous pour vos questions et vos commentaires.',
+      'contact_action': 'Envoyer un e-mail',
+      'contact_error': 'Impossible d’ouvrir une application e-mail.',
+      'contact_body': 'Demande d’assistance concernant Apprentissage Coloré :',
+    },
+    'ku': {
+      'title': 'Polîtîkaya Taybetiyê',
+      'intro':
+          'Hînkirina Rengîn ji bo ku zarok bi lîstikan rengan hîn bibin hatiye çêkirin.',
+      'data':
+          'Ev serlêdan tu danegeha kesane kom nake, nahêle an bi aliyên sêyemîn re parve nake.',
+      'local':
+          'Pêşketina lîstikê, stêrk û bijarteyên ziman/dengê tenê li ser cîhaza we têne hilanîn.',
+      'ads': 'Serlêdan reklam, çerez an şopîneran bi kar nake.',
+      'contact': 'Ji bo pirs û şîroveyên xwe bi me re têkilî daynin.',
+      'contact_action': 'E-name bişîne',
+      'contact_error': 'Sepana e-nameyê nehat vekirin.',
+      'contact_body': 'Daxwaza piştgiriyê derbarê Hînkirina Rengîn de:',
     },
   };
+
+  Future<void> _openSupportEmail(
+    BuildContext context,
+    Map<String, String> s,
+  ) async {
+    final uri = Uri(
+      scheme: 'mailto',
+      path: _supportEmail,
+      queryParameters: {
+        'subject': app.t('app_name'),
+        'body': s['contact_body']!,
+      },
+    );
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $uri');
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s['contact_error']!)));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +139,22 @@ class PrivacyScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                Center(
+                  child: FilledButton.icon(
+                    onPressed: () => _openSupportEmail(context, s),
+                    icon: const Icon(Icons.email_outlined),
+                    label: Text(s['contact_action']!),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    _supportEmail,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.95),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
