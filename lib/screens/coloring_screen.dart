@@ -261,6 +261,15 @@ class _ColoringScreenState extends State<ColoringScreen> {
         actionsAlignment: MainAxisAlignment.center,
         actions: [
           RoundButton(
+            label: widget.app.t('choose_another_game'),
+            icon: Icons.apps,
+            color: const Color(0xFF5C6BC0),
+            onTap: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
+            },
+          ),
+          RoundButton(
             label: widget.app.t('next'),
             icon: Icons.arrow_forward,
             color: const Color(0xFF26A69A),

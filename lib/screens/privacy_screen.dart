@@ -186,6 +186,13 @@ class PrivacyScreen extends StatelessWidget {
                     onPressed: () => _openPublicPolicy(context, s),
                     icon: const Icon(Icons.open_in_new),
                     label: Text(s['public_policy_action']!),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:renkli_ogrenme/screens/coloring_screen.dart';
+import 'package:renkli_ogrenme/screens/home_screen.dart';
 import 'package:renkli_ogrenme/services/app_state.dart';
 import 'package:renkli_ogrenme/services/tts_service.dart';
 
@@ -66,6 +67,7 @@ void main() {
       find.text('Félicitations ! Tu as terminé le niveau !'),
       findsOneWidget,
     );
+    expect(find.text('Choisis un autre jeu'), findsOneWidget);
     expect(app.bestScore(GameIds.coloring), 180);
     expect(app.starsFor(GameIds.coloring), 3);
   });
@@ -77,5 +79,47 @@ void main() {
     await tester.pump();
 
     expect(find.text('Rengkirin - Mal'), findsOneWidget);
+  });
+
+  testWidgets('returns to the game menu after choosing another game', (
+    tester,
+  ) async {
+    final app = AppState();
+    app.setLanguage(AppLanguage.en);
+    await tester.pumpWidget(MaterialApp(home: HomeScreen(app: app)));
+
+    await tester.scrollUntilVisible(
+      find.text('Coloring'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Coloring'));
+    await tester.pumpAndSettle();
+
+    final box = tester.renderObject<RenderBox>(
+      find.byKey(const ValueKey('coloring_canvas')),
+    );
+    final origin = box.localToGlobal(Offset.zero);
+    final size = box.size;
+    final regions = [
+      const Offset(0.50, 0.25),
+      const Offset(0.27, 0.75),
+      const Offset(0.50, 0.75),
+      const Offset(0.35, 0.58),
+      const Offset(0.65, 0.58),
+      const Offset(0.70, 0.40),
+    ];
+    for (final point in regions) {
+      await tester.tapAt(
+        origin + Offset(point.dx * size.width, point.dy * size.height),
+      );
+      await tester.pump();
+    }
+
+    await tester.tap(find.text('Choose another game'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Games'), findsOneWidget);
+    expect(find.byType(ColoringScreen), findsNothing);
   });
 }
