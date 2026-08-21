@@ -257,7 +257,7 @@ class _FooterLinks extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          '${app.t('developer')}: ${MenuScreen._developerName} · ${app.t('version')} 1.0.1',
+          '${app.t('developer')}: ${MenuScreen._developerName} · ${app.t('version')} 1.0.2',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,

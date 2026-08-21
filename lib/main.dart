@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/splash_screen.dart';
 import 'services/app_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final app = AppState();
   await app.init();
   runApp(RenkliOgrenmeApp(appState: app));
@@ -31,7 +33,9 @@ class _RenkliOgrenmeAppState extends State<RenkliOgrenmeApp> {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF1E88E5),
+            ),
           ),
           home: SplashScreen(app: _appState),
         );
