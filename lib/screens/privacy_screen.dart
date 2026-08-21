@@ -6,6 +6,11 @@ class PrivacyScreen extends StatelessWidget {
   final AppState app;
 
   static const _supportEmail = 'turguttaskesen@gmail.com';
+  static const _privacyPolicyUrl = String.fromEnvironment(
+    'PRIVACY_POLICY_URL',
+    defaultValue:
+        'https://ttaskesen.github.io/renkli_ogrenme/privacy-policy.html',
+  );
 
   const PrivacyScreen({super.key, required this.app});
 
@@ -24,6 +29,8 @@ class PrivacyScreen extends StatelessWidget {
       'contact_action': 'E-posta gönder',
       'contact_error': 'E-posta uygulaması açılamadı.',
       'contact_body': 'Renkli Öğrenme hakkında destek isteği:',
+      'public_policy_action': 'Web gizlilik politikasını aç',
+      'public_policy_error': 'Gizlilik politikası açılamadı.',
     },
     'en': {
       'title': 'Privacy Policy',
@@ -38,6 +45,8 @@ class PrivacyScreen extends StatelessWidget {
       'contact_action': 'Send email',
       'contact_error': 'Could not open an email app.',
       'contact_body': 'Support request about Colorful Learning:',
+      'public_policy_action': 'Open the online privacy policy',
+      'public_policy_error': 'Could not open the privacy policy.',
     },
     'fr': {
       'title': 'Politique de confidentialité',
@@ -52,6 +61,9 @@ class PrivacyScreen extends StatelessWidget {
       'contact_action': 'Envoyer un e-mail',
       'contact_error': 'Impossible d’ouvrir une application e-mail.',
       'contact_body': 'Demande d’assistance concernant Apprentissage Coloré :',
+      'public_policy_action': 'Ouvrir la politique en ligne',
+      'public_policy_error':
+          'Impossible d’ouvrir la politique de confidentialité.',
     },
     'ku': {
       'title': 'Polîtîkaya Taybetiyê',
@@ -66,6 +78,8 @@ class PrivacyScreen extends StatelessWidget {
       'contact_action': 'E-name bişîne',
       'contact_error': 'Sepana e-nameyê nehat vekirin.',
       'contact_body': 'Daxwaza piştgiriyê derbarê Hînkirina Rengîn de:',
+      'public_policy_action': 'Polîtîkaya serhêl veke',
+      'public_policy_error': 'Polîtîkaya taybetiyê venebû.',
     },
   };
 
@@ -90,6 +104,26 @@ class PrivacyScreen extends StatelessWidget {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(s['contact_error']!)));
+      }
+    }
+  }
+
+  Future<void> _openPublicPolicy(
+    BuildContext context,
+    Map<String, String> s,
+  ) async {
+    try {
+      if (!await launchUrl(
+        Uri.parse(_privacyPolicyUrl),
+        mode: LaunchMode.externalApplication,
+      )) {
+        throw Exception('Could not launch $_privacyPolicyUrl');
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s['public_policy_error']!)));
       }
     }
   }
@@ -144,6 +178,14 @@ class PrivacyScreen extends StatelessWidget {
                     onPressed: () => _openSupportEmail(context, s),
                     icon: const Icon(Icons.email_outlined),
                     label: Text(s['contact_action']!),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _openPublicPolicy(context, s),
+                    icon: const Icon(Icons.open_in_new),
+                    label: Text(s['public_policy_action']!),
                   ),
                 ),
                 const SizedBox(height: 12),

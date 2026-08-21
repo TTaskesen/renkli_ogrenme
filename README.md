@@ -62,6 +62,13 @@ Yayınlandıktan sonra gerçek Google Play adresini derleme sırasında ver:
 flutter build appbundle --release --dart-define=PLAY_STORE_URL=https://play.google.com/store/apps/details?id=UYGULAMA_PAKET_ADINIZ
 ```
 
+Gizlilik politikası GitHub Pages dışında başka bir adreste yayınlanırsa, uygulama
+içindeki bağlantıyı da aynı adrese yönlendirmek için bu derleme tanımını ekle:
+
+```sh
+--dart-define=PRIVACY_POLICY_URL=https://ornek-alan-adiniz.com/gizlilik
+```
+
 ## Android yayın imzalama
 
 Release paketi yalnızca kendi keystore'un ile imzalanır; proje debug anahtarını

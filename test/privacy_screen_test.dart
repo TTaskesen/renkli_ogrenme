@@ -10,6 +10,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: PrivacyScreen(app: app)));
 
     expect(find.text('E-posta gönder'), findsOneWidget);
+    expect(find.text('Web gizlilik politikasını aç'), findsOneWidget);
     expect(find.text('turguttaskesen@gmail.com'), findsOneWidget);
   });
 
