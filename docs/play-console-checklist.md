@@ -1,6 +1,6 @@
 # Play Console kontrol listesi - reklamsız ilk sürüm
 
-Bu taslak, `com.renkli.renkli_ogrenme` paketi ve reklamsız ilk sürüm içindir.
+Bu taslak, `com.taskesen.renkli_ogrenme` paketi ve reklamsız ilk sürüm içindir.
 Play Console'da yalnızca son paketi ve gerçek uygulama davranışını doğruladıktan
 sonra gönderilmelidir.
 

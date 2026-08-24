@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.renkli.renkli_ogrenme"
+    namespace = "com.taskesen.renkli_ogrenme"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "30.0.15729638"
 
@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         // TODO: Kendinize ait benzersiz uygulama kimliğini belirtin (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.renkli.renkli_ogrenme"
+        applicationId = "com.taskesen.renkli_ogrenme"
         // Aşağıdaki değerleri uygulamanızın gereksinimlerine göre güncelleyebilirsiniz.
         // Ayrıntılı bilgi: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

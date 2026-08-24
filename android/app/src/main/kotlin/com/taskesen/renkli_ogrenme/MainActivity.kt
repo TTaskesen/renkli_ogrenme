@@ -1,4 +1,4 @@
-package com.renkli.renkli_ogrenme
+package com.taskesen.renkli_ogrenme
 
 import io.flutter.embedding.android.FlutterActivity
 
