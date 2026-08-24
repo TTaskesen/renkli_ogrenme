@@ -27,11 +27,12 @@ class LanguageButtons extends StatelessWidget {
           label: 'FR',
           onTap: () => app.setLanguage(AppLanguage.fr),
         ),
-        _LanguageButton(
-          selected: app.language == AppLanguage.ku,
-          label: 'KU',
-          onTap: () => app.setLanguage(AppLanguage.ku),
-        ),
+        if (AppState.isKurmanjiAvailable)
+          _LanguageButton(
+            selected: app.language == AppLanguage.ku,
+            label: 'KU',
+            onTap: () => app.setLanguage(AppLanguage.ku),
+          ),
       ],
     );
   }
