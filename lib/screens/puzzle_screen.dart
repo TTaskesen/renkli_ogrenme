@@ -48,12 +48,14 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   }
 
   void _setup() {
-    final baseColors = List.of(ColorData.colors)..shuffle(_random);
+    // Açık zeminde kaybolmaması için beyazı yapboz parçası olarak kullanmıyoruz.
+    final baseColors = List.of(ColorData.colors)
+      ..removeWhere((item) => item.id == 'white')
+      ..shuffle(_random);
     final colors = baseColors.take(_shapes.length).toList();
     _pieces = List.generate(_shapes.length, (i) {
       final shape = _shapes[i];
-      final colorsForShape = List.of(colors)..shuffle(_random);
-      return _Piece(shape, colorsForShape[0].color);
+      return _Piece(shape, colors[i].color);
     });
     _shuffled = List.of(_pieces)..shuffle(_random);
     _score = 0;
@@ -179,7 +181,8 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                   final piece = _pieces[i];
                   return DragTarget<_Piece>(
                     onWillAcceptWithDetails: (details) {
-                      final ok = details.data.shape == piece.shape &&
+                      final ok =
+                          details.data.shape == piece.shape &&
                           details.data.color == piece.color;
                       _hoveredSlot = ok ? null : i;
                       return ok;
@@ -287,10 +290,10 @@ class _Slot extends StatelessWidget {
         color: piece.placed
             ? const Color(0xFFEDE7F6)
             : wrong
-                ? const Color(0xFFFFCDD2)
-                : highlighted
-                    ? const Color(0xFFFFF9C4)
-                    : Colors.white,
+            ? const Color(0xFFFFCDD2)
+            : highlighted
+            ? const Color(0xFFFFF9C4)
+            : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: wrong ? const Color(0xFFC62828) : Colors.black26,
@@ -346,6 +349,11 @@ class _ShapePainter extends CustomPainter {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
+
+    _drawShape(canvas, size, paint);
+  }
+
+  void _drawShape(Canvas canvas, Size size, Paint paint) {
     final w = size.width;
     final h = size.height;
     final c = Offset(w / 2, h / 2);

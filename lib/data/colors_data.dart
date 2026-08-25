@@ -10,7 +10,7 @@ class ColorData {
       nameFr: 'Rouge',
       nameKu: 'Sor',
       color: Color(0xFFE53935),
-      icon: Icons.apple,
+      icon: Icons.palette,
     ),
     ColorItem(
       id: 'orange',
