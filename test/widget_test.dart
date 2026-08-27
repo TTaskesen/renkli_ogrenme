@@ -55,6 +55,14 @@ void main() {
     expect(find.text('Ses Kapalı'), findsOneWidget);
   });
 
+  testWidgets('Kurmanji language button is available', (tester) async {
+    final app = AppState();
+
+    await tester.pumpWidget(MaterialApp(home: MenuScreen(app: app)));
+
+    expect(find.text('KU'), findsOneWidget);
+  });
+
   testWidgets('French menu has no overflow on a narrow screen', (
     WidgetTester tester,
   ) async {

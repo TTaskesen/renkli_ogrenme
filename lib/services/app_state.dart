@@ -33,10 +33,6 @@ class AppState extends ChangeNotifier {
     GameIds.coloring,
   ];
 
-  /// Kurmançi çevirileri, yayın öncesi doğrulama için yalnızca debug
-  /// derlemelerinde kullanılabilir. Release ve profile paketlerinde görünmez.
-  static bool get isKurmanjiAvailable => kDebugMode;
-
   AppLanguage get language => _language;
 
   bool get soundEnabled => _soundEnabled;
@@ -74,10 +70,7 @@ class AppState extends ChangeNotifier {
         ? AppLanguage.values.asNameMap()[langName]
         : null;
     if (saved != null) {
-      _language = _availableLanguage(saved);
-      if (_language != saved) {
-        await prefs.setString(_languageKey, _language.name);
-      }
+      _language = saved;
     }
     _soundEnabled = prefs.getBool(_soundKey) ?? true;
     TtsService.enabled = _soundEnabled;
@@ -89,18 +82,11 @@ class AppState extends ChangeNotifier {
   }
 
   void setLanguage(AppLanguage lang) {
-    _language = _availableLanguage(lang);
+    _language = lang;
     notifyListeners();
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString(_languageKey, _language.name);
     });
-  }
-
-  static AppLanguage _availableLanguage(AppLanguage language) {
-    if (language == AppLanguage.ku && !isKurmanjiAvailable) {
-      return AppLanguage.tr;
-    }
-    return language;
   }
 
   void setSoundEnabled(bool value) {
