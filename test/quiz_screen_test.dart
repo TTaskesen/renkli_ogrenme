@@ -6,8 +6,9 @@ import 'package:renkli_ogrenme/screens/quiz_screen.dart';
 import 'package:renkli_ogrenme/services/app_state.dart';
 
 void main() {
-  testWidgets('quiz advances through 10 questions and shows the done dialog',
-      (WidgetTester tester) async {
+  testWidgets('quiz advances through 10 questions and shows the done dialog', (
+    WidgetTester tester,
+  ) async {
     SharedPreferences.setMockInitialValues({});
     final app = AppState();
     await app.init();

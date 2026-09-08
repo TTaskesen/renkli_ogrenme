@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:renkli_ogrenme/main.dart';
 import 'package:renkli_ogrenme/screens/menu_screen.dart';
+import 'package:renkli_ogrenme/screens/level_selection_screen.dart';
 import 'package:renkli_ogrenme/services/app_state.dart';
 
 Future<void> pumpPastSplash(WidgetTester tester) async {
@@ -61,6 +62,25 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: MenuScreen(app: app)));
 
     expect(find.text('KU'), findsOneWidget);
+  });
+
+  testWidgets('level selection exposes three difficulty choices', (
+    tester,
+  ) async {
+    final app = AppState();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LevelSelectionScreen(
+          app: app,
+          gameId: GameIds.quiz,
+          gameBuilder: (_) => const SizedBox(),
+        ),
+      ),
+    );
+
+    expect(find.text('Kolay'), findsOneWidget);
+    expect(find.text('Orta'), findsOneWidget);
+    expect(find.text('Zor'), findsOneWidget);
   });
 
   testWidgets('French menu has no overflow on a narrow screen', (

@@ -5,6 +5,9 @@ import '../widgets/language_buttons.dart';
 import '../widgets/stars_pill.dart';
 import 'home_screen.dart';
 import 'privacy_screen.dart';
+import 'progress_screen.dart';
+import 'settings_screen.dart';
+import '../widgets/parent_gate.dart';
 
 class MenuScreen extends StatelessWidget {
   final AppState app;
@@ -91,6 +94,8 @@ class MenuScreen extends StatelessWidget {
                   const SizedBox(height: 40),
                   _PlayButton(app: app),
                   const SizedBox(height: 40),
+                  _UtilityButtons(app: app),
+                  const SizedBox(height: 24),
                   _FooterLinks(app: app),
                   const SizedBox(height: 16),
                 ],
@@ -206,12 +211,75 @@ class _PlayButton extends StatelessWidget {
   }
 }
 
+class _UtilityButtons extends StatelessWidget {
+  final AppState app;
+
+  const _UtilityButtons({required this.app});
+
+  Future<void> _open(BuildContext context, Widget screen) async {
+    if (await ParentGate.request(context, app) && context.mounted) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        _UtilityButton(
+          icon: Icons.bar_chart,
+          label: app.t('progress'),
+          onTap: () => _open(context, ProgressScreen(app: app)),
+        ),
+        _UtilityButton(
+          icon: Icons.settings,
+          label: app.t('settings'),
+          onTap: () => _open(context, SettingsScreen(app: app)),
+        ),
+      ],
+    );
+  }
+}
+
+class _UtilityButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _UtilityButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon),
+        label: Text(label),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Colors.white70),
+        ),
+      ),
+    );
+  }
+}
+
 class _FooterLinks extends StatelessWidget {
   final AppState app;
 
   const _FooterLinks({required this.app});
 
   Future<void> _openStore(BuildContext context) async {
+    if (!await ParentGate.request(context, app) || !context.mounted) return;
     if (MenuScreen._storeUrl.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -231,6 +299,13 @@ class _FooterLinks extends StatelessWidget {
     }
   }
 
+  Future<void> _openPrivacy(BuildContext context) async {
+    if (!await ParentGate.request(context, app) || !context.mounted) return;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => PrivacyScreen(app: app)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -243,11 +318,7 @@ class _FooterLinks extends StatelessWidget {
           children: [
             _TextLink(
               label: app.t('privacy_policy'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => PrivacyScreen(app: app)),
-                );
-              },
+              onTap: () => _openPrivacy(context),
             ),
             _TextLink(
               label: app.t('rate_app'),
@@ -257,7 +328,7 @@ class _FooterLinks extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          '${app.t('developer')}: ${MenuScreen._developerName} · ${app.t('version')} 1.0.6',
+          '${app.t('developer')}: ${MenuScreen._developerName} · ${app.t('version')} ${AppState.appVersion}',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/app_state.dart';
+import '../widgets/parent_gate.dart';
 
 class PrivacyScreen extends StatelessWidget {
   final AppState app;
@@ -87,6 +88,7 @@ class PrivacyScreen extends StatelessWidget {
     BuildContext context,
     Map<String, String> s,
   ) async {
+    if (!await ParentGate.request(context, app) || !context.mounted) return;
     final uri = Uri(
       scheme: 'mailto',
       path: _supportEmail,
@@ -112,6 +114,7 @@ class PrivacyScreen extends StatelessWidget {
     BuildContext context,
     Map<String, String> s,
   ) async {
+    if (!await ParentGate.request(context, app) || !context.mounted) return;
     try {
       if (!await launchUrl(
         Uri.parse(_privacyPolicyUrl),

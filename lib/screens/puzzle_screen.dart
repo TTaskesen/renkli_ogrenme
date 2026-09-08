@@ -17,8 +17,9 @@ class _Piece {
 
 class PuzzleScreen extends StatefulWidget {
   final AppState app;
+  final int level;
 
-  const PuzzleScreen({super.key, required this.app});
+  const PuzzleScreen({super.key, required this.app, this.level = 1});
 
   @override
   State<PuzzleScreen> createState() => _PuzzleScreenState();
@@ -52,8 +53,9 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     final baseColors = List.of(ColorData.colors)
       ..removeWhere((item) => item.id == 'white')
       ..shuffle(_random);
-    final colors = baseColors.take(_shapes.length).toList();
-    _pieces = List.generate(_shapes.length, (i) {
+    final shapeCount = 3 + widget.level;
+    final colors = baseColors.take(shapeCount).toList();
+    _pieces = List.generate(shapeCount, (i) {
       final shape = _shapes[i];
       return _Piece(shape, colors[i].color);
     });
@@ -86,8 +88,13 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
 
   void _showDone() {
     final app = widget.app;
-    final stars = AppState.starsForScore(_score, _shapes.length * 10);
-    final isRecord = app.recordScore(GameIds.puzzle, _score, stars);
+    final stars = AppState.starsForScore(_score, _pieces.length * 10);
+    final isRecord = app.recordScore(
+      GameIds.puzzle,
+      _score,
+      stars,
+      level: widget.level,
+    );
     showDialog(
       context: context,
       barrierDismissible: false,

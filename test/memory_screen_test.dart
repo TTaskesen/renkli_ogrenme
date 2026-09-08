@@ -6,8 +6,9 @@ import 'package:renkli_ogrenme/screens/memory_screen.dart';
 import 'package:renkli_ogrenme/services/app_state.dart';
 
 void main() {
-  testWidgets('memory game flips cards and counts moves',
-      (WidgetTester tester) async {
+  testWidgets('memory game flips cards and counts moves', (
+    WidgetTester tester,
+  ) async {
     SharedPreferences.setMockInitialValues({});
     final app = AppState();
     await app.init();

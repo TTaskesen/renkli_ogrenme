@@ -7,6 +7,7 @@ import 'memory_screen.dart';
 import 'coloring_screen.dart';
 import 'puzzle_screen.dart';
 import 'quiz_screen.dart';
+import 'level_selection_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final AppState app;
@@ -43,7 +44,11 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                Icon(Icons.palette, size: 56, color: Colors.white.withValues(alpha: 0.9)),
+                Icon(
+                  Icons.palette,
+                  size: 56,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
                 const SizedBox(height: 12),
                 Text(
                   app.t('app_name'),
@@ -87,20 +92,45 @@ class _MenuGrid extends StatelessWidget {
       _MenuItem(app.t('learn'), Icons.palette, const Color(0xFFE53935), () {
         _open(context, LearnScreen(app: app));
       }),
-      _MenuItem(app.t('match'), Icons.compare_arrows, const Color(0xFFFB8C00), () {
-        _open(context, MatchScreen(app: app));
-      }),
+      _MenuItem(
+        app.t('match'),
+        Icons.compare_arrows,
+        const Color(0xFFFB8C00),
+        () {
+          _openLevels(
+            context,
+            GameIds.match,
+            (level) => MatchScreen(app: app, level: level),
+          );
+        },
+      ),
       _MenuItem(app.t('memory'), Icons.psychology, const Color(0xFF43A047), () {
-        _open(context, MemoryScreen(app: app));
+        _openLevels(
+          context,
+          GameIds.memory,
+          (level) => MemoryScreen(app: app, level: level),
+        );
       }),
       _MenuItem(app.t('coloring'), Icons.brush, const Color(0xFF1E88E5), () {
-        _open(context, ColoringScreen(app: app));
+        _openLevels(
+          context,
+          GameIds.coloring,
+          (level) => ColoringScreen(app: app, level: level),
+        );
       }),
       _MenuItem(app.t('puzzle'), Icons.extension, const Color(0xFF8E24AA), () {
-        _open(context, PuzzleScreen(app: app));
+        _openLevels(
+          context,
+          GameIds.puzzle,
+          (level) => PuzzleScreen(app: app, level: level),
+        );
       }),
       _MenuItem(app.t('quiz'), Icons.quiz, const Color(0xFF00897B), () {
-        _open(context, QuizScreen(app: app));
+        _openLevels(
+          context,
+          GameIds.quiz,
+          (level) => QuizScreen(app: app, level: level),
+        );
       }),
     ];
 
@@ -116,8 +146,17 @@ class _MenuGrid extends StatelessWidget {
   }
 
   void _open(BuildContext context, Widget screen) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => screen),
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+  }
+
+  void _openLevels(
+    BuildContext context,
+    String gameId,
+    Widget Function(int level) builder,
+  ) {
+    _open(
+      context,
+      LevelSelectionScreen(app: app, gameId: gameId, gameBuilder: builder),
     );
   }
 }

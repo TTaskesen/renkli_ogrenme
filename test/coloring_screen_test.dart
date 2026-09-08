@@ -95,6 +95,9 @@ void main() {
     );
     await tester.tap(find.text('Coloring'));
     await tester.pumpAndSettle();
+    expect(find.text('Easy'), findsOneWidget);
+    await tester.tap(find.text('Easy'));
+    await tester.pumpAndSettle();
 
     final box = tester.renderObject<RenderBox>(
       find.byKey(const ValueKey('coloring_canvas')),

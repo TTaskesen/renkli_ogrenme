@@ -221,6 +221,55 @@ void main() {
       expect(app.starsFor(GameIds.coloring), 0);
       expect(app.totalStars, 0);
     });
+
+    test('stores level scores separately and keeps legacy totals', () {
+      SharedPreferences.setMockInitialValues({});
+      final app = AppState();
+      app.recordScore(GameIds.quiz, 80, 2, level: 2);
+      app.recordScore(GameIds.quiz, 100, 3, level: 3);
+
+      expect(app.bestScoreForLevel(GameIds.quiz, 2), 80);
+      expect(app.starsForLevel(GameIds.quiz, 2), 2);
+      expect(app.bestScoreForLevel(GameIds.quiz, 3), 100);
+      expect(app.bestScore(GameIds.quiz), 100);
+      expect(app.totalStars, 5);
+    });
+
+    test('resets only game progress while preserving settings', () async {
+      SharedPreferences.setMockInitialValues({});
+      final app = AppState();
+      await app.init();
+      app.setLanguage(AppLanguage.fr);
+      app.setSoundEnabled(false);
+      app.setLargeText(true);
+      app.setHighContrast(true);
+      app.setShowColorNames(false);
+      app.setShapeHints(false);
+      app.recordScore(GameIds.puzzle, 40, 1, level: 2);
+      app.recordColorAttempt('red', false);
+      await app.resetGameProgress();
+
+      expect(app.bestScore(GameIds.puzzle), 0);
+      expect(app.bestScoreForLevel(GameIds.puzzle, 2), 0);
+      expect(app.colorAttempts('red'), 0);
+      expect(app.language, AppLanguage.fr);
+      expect(app.soundEnabled, isFalse);
+      expect(app.largeText, isTrue);
+      expect(app.highContrast, isTrue);
+      expect(app.showColorNames, isFalse);
+      expect(app.shapeHints, isFalse);
+    });
+
+    test('tracks color learning status from attempts', () {
+      SharedPreferences.setMockInitialValues({});
+      final app = AppState();
+      app.recordColorAttempt('blue', true);
+      app.recordColorAttempt('blue', true);
+      app.recordColorAttempt('blue', true);
+      expect(app.colorAttempts('blue'), 3);
+      expect(app.colorCorrect('blue'), 3);
+      expect(app.colorStatus('blue'), 'learned');
+    });
   });
 
   group('starsForScore', () {

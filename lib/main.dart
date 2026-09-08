@@ -34,9 +34,22 @@ class _RenkliOgrenmeAppState extends State<RenkliOgrenmeApp> {
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF1E88E5),
+              seedColor: _appState.highContrast
+                  ? Colors.black
+                  : const Color(0xFF1E88E5),
+              contrastLevel: _appState.highContrast ? 1.0 : 0.0,
             ),
+            focusColor: _appState.highContrast ? Colors.black : null,
           ),
+          builder: (context, child) {
+            final media = MediaQuery.of(context);
+            return MediaQuery(
+              data: media.copyWith(
+                textScaler: TextScaler.linear(_appState.largeText ? 1.2 : 1.0),
+              ),
+              child: child!,
+            );
+          },
           home: SplashScreen(app: _appState),
         );
       },

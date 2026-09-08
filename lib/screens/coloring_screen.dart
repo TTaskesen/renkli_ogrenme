@@ -47,8 +47,9 @@ int coloringScoreFor(Duration elapsed) {
 
 class ColoringScreen extends StatefulWidget {
   final AppState app;
+  final int level;
 
-  const ColoringScreen({super.key, required this.app});
+  const ColoringScreen({super.key, required this.app, this.level = 1});
 
   @override
   State<ColoringScreen> createState() => _ColoringScreenState();
@@ -65,7 +66,13 @@ class _ColoringScreenState extends State<ColoringScreen> {
   @override
   void initState() {
     super.initState();
-    _pictures = _buildPictures();
+    final allPictures = _buildPictures();
+    final pictureCount = widget.level == 1
+        ? 2
+        : widget.level == 2
+        ? 4
+        : 6;
+    _pictures = allPictures.take(pictureCount).toList();
     _stopwatch.start();
   }
 
@@ -232,7 +239,12 @@ class _ColoringScreenState extends State<ColoringScreen> {
     final elapsed = _stopwatch.elapsed;
     final score = coloringScoreFor(elapsed);
     final stars = AppState.starsForScore(score, _coloringMaxScore);
-    final isRecord = widget.app.recordScore(GameIds.coloring, score, stars);
+    final isRecord = widget.app.recordScore(
+      GameIds.coloring,
+      score,
+      stars,
+      level: widget.level,
+    );
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -266,7 +278,7 @@ class _ColoringScreenState extends State<ColoringScreen> {
             color: const Color(0xFF5C6BC0),
             onTap: () {
               Navigator.of(ctx).pop();
-              Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
           RoundButton(
@@ -327,6 +339,7 @@ class _ColoringScreenState extends State<ColoringScreen> {
             ),
           ),
           _Palette(
+            app: app,
             selected: _selectedColor,
             onSelect: (c) => setState(() => _selectedColor = c),
           ),
@@ -419,10 +432,15 @@ List<Offset> scaleNormalizedPoints(List<Offset> points, Size size) {
 }
 
 class _Palette extends StatelessWidget {
+  final AppState app;
   final Color selected;
   final ValueChanged<Color> onSelect;
 
-  const _Palette({required this.selected, required this.onSelect});
+  const _Palette({
+    required this.app,
+    required this.selected,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -441,16 +459,22 @@ class _Palette extends StatelessWidget {
         itemBuilder: (context, i) {
           final c = ColorData.colors[i];
           final isSelected = c.color.toARGB32() == selected.toARGB32();
-          return GestureDetector(
-            onTap: () => onSelect(c.color),
-            child: Container(
-              width: 44,
-              decoration: BoxDecoration(
-                color: c.color,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? const Color(0xFF37474F) : Colors.black12,
-                  width: isSelected ? 4 : 1,
+          return Semantics(
+            button: true,
+            label: c.nameForLanguageCode(app.langCode),
+            child: GestureDetector(
+              onTap: () => onSelect(c.color),
+              child: Container(
+                width: 44,
+                decoration: BoxDecoration(
+                  color: c.color,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFF37474F)
+                        : Colors.black12,
+                    width: isSelected ? 4 : 1,
+                  ),
                 ),
               ),
             ),

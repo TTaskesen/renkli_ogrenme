@@ -8,16 +8,19 @@ import '../widgets/game_widgets.dart';
 
 class MatchScreen extends StatefulWidget {
   final AppState app;
+  final int level;
 
-  const MatchScreen({super.key, required this.app});
+  const MatchScreen({super.key, required this.app, this.level = 1});
 
   @override
   State<MatchScreen> createState() => _MatchScreenState();
 }
 
 class _MatchScreenState extends State<MatchScreen> {
-  static const int _roundColorCount = 4;
   final Random _random = Random();
+
+  int get _roundColorCount => 3 + widget.level;
+  int get _roundLimit => 2 + widget.level;
 
   late List<ColorItem> _roundColors;
   late List<ColorItem> _options;
@@ -61,12 +64,13 @@ class _MatchScreenState extends State<MatchScreen> {
     if (_locked) return;
     setState(() {
       if (selected.id == _targetIndex.id) {
+        widget.app.recordColorAttempt(selected.id, true);
         _score += 10;
         _matches++;
         _matchedIds.add(selected.id);
         if (_matches == _roundColorCount) {
           _locked = true;
-          if (_round < 3) {
+          if (_round < _roundLimit) {
             TtsService.speak(widget.app.t('great'), widget.app.langCode);
             Future.delayed(const Duration(milliseconds: 900), () {
               if (mounted) {
@@ -83,6 +87,7 @@ class _MatchScreenState extends State<MatchScreen> {
           _currentTarget();
         }
       } else {
+        widget.app.recordColorAttempt(_targetIndex.id, false);
         TtsService.speak(widget.app.t('wrong'), widget.app.langCode);
       }
     });
@@ -91,9 +96,14 @@ class _MatchScreenState extends State<MatchScreen> {
   void _showDone() {
     final app = widget.app;
     TtsService.speak(app.t('great'), app.langCode);
-    final maxScore = 3 * _roundColorCount * 10;
+    final maxScore = _roundLimit * _roundColorCount * 10;
     final stars = AppState.starsForScore(_score, maxScore);
-    final isRecord = app.recordScore(GameIds.match, _score, stars);
+    final isRecord = app.recordScore(
+      GameIds.match,
+      _score,
+      stars,
+      level: widget.level,
+    );
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -152,6 +162,9 @@ class _MatchScreenState extends State<MatchScreen> {
                   final matched = _matchedIds.contains(c.id);
                   return _OptionCard(
                     color: c.color,
+                    label: app.showColorNames
+                        ? c.nameForLanguageCode(app.langCode)
+                        : null,
                     matched: matched,
                     onTap: matched ? null : () => _select(c),
                   );
@@ -222,34 +235,40 @@ class _TargetCard extends StatelessWidget {
 
 class _OptionCard extends StatelessWidget {
   final Color color;
+  final String? label;
   final bool matched;
   final VoidCallback? onTap;
 
   const _OptionCard({
     required this.color,
+    this.label,
     required this.matched,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(24),
-        border: color.computeLuminance() > 0.9
-            ? Border.all(color: Colors.black26)
-            : null,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    return Semantics(
+      button: true,
+      label: label,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+          color: color,
           borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
-          child: matched
-              ? const Icon(Icons.check_circle, size: 48, color: Colors.white)
+          border: color.computeLuminance() > 0.9
+              ? Border.all(color: Colors.black26)
               : null,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onTap,
+            child: matched
+                ? const Icon(Icons.check_circle, size: 48, color: Colors.white)
+                : null,
+          ),
         ),
       ),
     );

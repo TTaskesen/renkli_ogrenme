@@ -8,17 +8,19 @@ import '../widgets/game_widgets.dart';
 
 class QuizScreen extends StatefulWidget {
   final AppState app;
+  final int level;
 
-  const QuizScreen({super.key, required this.app});
+  const QuizScreen({super.key, required this.app, this.level = 1});
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  static const int _questionCount = 10;
-  static const int _optionCount = 4;
   final Random _random = Random();
+
+  int get _questionCount => 10 + (widget.level - 1) * 2;
+  int get _optionCount => 3 + widget.level;
 
   late List<_Question> _questions;
   int _current = 0;
@@ -61,6 +63,7 @@ class _QuizScreenState extends State<QuizScreen> {
       if (correct) _score += 10;
     });
     final app = widget.app;
+    app.recordColorAttempt(_questions[_current].target.id, correct);
     TtsService.speak(correct ? app.t('correct') : app.t('wrong'), app.langCode);
     Future.delayed(const Duration(milliseconds: 1200), () {
       if (!mounted) return;
@@ -79,7 +82,12 @@ class _QuizScreenState extends State<QuizScreen> {
   void _showDone() {
     final app = widget.app;
     final stars = AppState.starsForScore(_score, _questionCount * 10);
-    final isRecord = app.recordScore(GameIds.quiz, _score, stars);
+    final isRecord = app.recordScore(
+      GameIds.quiz,
+      _score,
+      stars,
+      level: widget.level,
+    );
     showDialog(
       context: context,
       barrierDismissible: false,

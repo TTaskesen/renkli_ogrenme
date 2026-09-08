@@ -7,16 +7,18 @@ import '../widgets/game_widgets.dart';
 
 class MemoryScreen extends StatefulWidget {
   final AppState app;
+  final int level;
 
-  const MemoryScreen({super.key, required this.app});
+  const MemoryScreen({super.key, required this.app, this.level = 1});
 
   @override
   State<MemoryScreen> createState() => _MemoryScreenState();
 }
 
 class _MemoryScreenState extends State<MemoryScreen> {
-  static const int _pairCount = 8;
   final Random _random = Random();
+
+  int get _pairCount => 8 + (widget.level - 1) * 2;
 
   late List<ColorItem> _deck;
   late List<int> _indices;
@@ -35,7 +37,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
   }
 
   void _shuffle() {
-    _deck = (List.of(ColorData.colors)..shuffle(_random)).sublist(0, _pairCount);
+    _deck = (List.of(
+      ColorData.colors,
+    )..shuffle(_random)).sublist(0, _pairCount);
     _indices = [];
     for (var i = 0; i < _deck.length; i++) {
       _indices.addAll([i, i]);
@@ -91,7 +95,12 @@ class _MemoryScreenState extends State<MemoryScreen> {
   void _showDone() {
     final app = widget.app;
     final stars = AppState.starsForScore(_score, _pairCount * 5);
-    final isRecord = app.recordScore(GameIds.memory, _score, stars);
+    final isRecord = app.recordScore(
+      GameIds.memory,
+      _score,
+      stars,
+      level: widget.level,
+    );
     showDialog(
       context: context,
       barrierDismissible: false,
