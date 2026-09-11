@@ -7,6 +7,7 @@ import 'memory_screen.dart';
 import 'coloring_screen.dart';
 import 'puzzle_screen.dart';
 import 'quiz_screen.dart';
+import 'mixing_screen.dart';
 import 'level_selection_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -130,6 +131,13 @@ class _MenuGrid extends StatelessWidget {
           context,
           GameIds.quiz,
           (level) => QuizScreen(app: app, level: level),
+        );
+      }),
+      _MenuItem(app.t('mixing'), Icons.blender, const Color(0xFFD81B60), () {
+        _openLevels(
+          context,
+          GameIds.mixing,
+          (level) => MixingScreen(app: app, level: level),
         );
       }),
     ];

@@ -44,6 +44,7 @@ void main() {
     expect(find.text('Oyunlar'), findsOneWidget);
     expect(find.text('Renkleri Öğren'), findsOneWidget);
     expect(find.text('Yapboz'), findsOneWidget);
+    expect(find.text('Ana Renkleri Karıştır'), findsOneWidget);
   });
 
   testWidgets('Sound toggle switches sound off', (WidgetTester tester) async {

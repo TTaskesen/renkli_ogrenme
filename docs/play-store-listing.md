@@ -22,7 +22,7 @@ Renkleri öğrenin, doğru rengi eşleştirin, hafıza kartlarını bulun, resim
 
 - Türkçe, İngilizce, Fransızca ve Kurmancî dil seçenekleri
 - Renk adlarını sesli dinleme
-- Renk eşleştirme, hafıza, boyama, yapboz ve renk testi oyunları
+- Renk eşleştirme, hafıza, boyama, yapboz, renk testi ve ana renkleri karıştırma oyunları
 - Yıldız ve en iyi skor takibi
 - Reklamsız kullanım
 - Kişisel veri toplamayan, çocuk dostu tasarım

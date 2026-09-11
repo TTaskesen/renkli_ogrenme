@@ -11,10 +11,11 @@ abstract class GameIds {
   static const memory = 'memory';
   static const puzzle = 'puzzle';
   static const coloring = 'coloring';
+  static const mixing = 'mixing';
 }
 
 class AppState extends ChangeNotifier {
-  static const appVersion = '1.1.0';
+  static const appVersion = '1.2.0';
   AppLanguage _language = AppLanguage.tr;
   bool _soundEnabled = true;
   bool _largeText = false;
@@ -44,6 +45,7 @@ class AppState extends ChangeNotifier {
     GameIds.memory,
     GameIds.puzzle,
     GameIds.coloring,
+    GameIds.mixing,
   ];
 
   AppLanguage get language => _language;

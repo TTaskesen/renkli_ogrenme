@@ -8,7 +8,7 @@ Bu belge, üretim erişimi başvurusu ve mağaza yayını öncesi son kontrol li
 - [x] Büyük metin, yüksek kontrast, renk adları, şekil ipuçları ve ses tekrarı ayarları cihazda saklanıyor.
 - [x] Skorlar ve yıldızlar oyun ve seviye bazında tutuluyor; eski skor anahtarları okunmaya devam ediyor.
 - [x] Renk denemesi/doğru cevap istatistikleri ve ilerleme sıfırlama eklendi.
-- [x] Beş oyun türünde kolay, orta ve zor seviyeler farklı oynanış yoğunluğu sunuyor.
+- [x] Altı oyun türünde kolay, orta ve zor seviyeler farklı oynanış yoğunluğu sunuyor.
 - [x] Türkçe, İngilizce, Fransızca ve Kurmançi ekran metinleri ile güvenli geri dönüş mevcut.
 - [x] Reklam, analitik, hesap, bulut senkronizasyonu ve hassas Android izni eklenmedi.
 
@@ -25,7 +25,7 @@ Bu belge, üretim erişimi başvurusu ve mağaza yayını öncesi son kontrol li
 | Alan | Android telefon | Küçük ekran | Büyük metin/yüksek kontrast | Dört dil | Sonuç |
 |---|---|---|---|---|---|
 | Veli kapısı ve sıfırlama | ☐ | ☐ | ☐ | ☐ | Bekliyor |
-| Beş oyun × üç seviye | ☐ | ☐ | ☐ | ☐ | Bekliyor |
+| Altı oyun × üç seviye | ☐ | ☐ | ☐ | ☐ | Bekliyor |
 | İlerleme, renk istatistikleri, kalıcılık | ☐ | ☐ | ☐ | ☐ | Bekliyor |
 | Ses aç/kapat ve TTS | ☐ | ☐ | ☐ | ☐ | Bekliyor |
 | Beyaz şekillerin görünürlüğü ve logo varlıkları | ☐ | ☐ | ☐ | ☐ | Bekliyor |
